@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_menu_home"
+            android:title="@string/menu_home"/>
+        <item
+            android:id="@+id/nav_play_queue"
+            android:icon="@drawable/ic_menu_play_queue_green"
+            android:title="@string/menu_play_queue"/>
+        <item
+            android:id="@+id/nav_play_list"
+            android:icon="@drawable/ic_menu_play_list"
+            android:title="@string/menu_play_list"/>
+        <item
+            android:id="@+id/nav_folder"
+            android:icon="@drawable/ic_menu_folder"
+            android:title="@string/menu_folder"/>
+    </group>
+
+    <group android:id="@+id/menu_advanced">
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_menu_settings"
+            android:title="@string/menu_settings"/>
+        <item
+            android:id="@+id/nav_help"
+            android:icon="@drawable/ic_menu_help"
+            android:title="@string/menu_help"/>
+    </group>
+
+</menu>
