@@ -12,6 +12,9 @@ import music.hzgkotlin.com.MetadataManager
 import music.hzgkotlin.com.R
 import music.hzgkotlin.com.adapter.QueueListAdapter
 
+/**
+ * 播放列表
+ */
 class QueueListFragment : Fragment() {
     val TAG = "QueueListFragment"
 
@@ -43,7 +46,8 @@ class QueueListFragment : Fragment() {
         adapter.setOnItemClickListener { view, adapterPosition ->
             MetadataManager.instance.playCustomQueue(adapterPosition)
             activity?.swichFragment(activity!!.FRAGMENT_PLAY_QUEUE)
-            activity?.controller?.transportControls?.skipToQueueItem(0)
+            if (MetadataManager.instance.playingQueue?.size != 0)
+                activity?.controller?.transportControls?.skipToQueueItem(0)
         }
 
         recyclerView?.adapter = adapter

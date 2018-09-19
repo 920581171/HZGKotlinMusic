@@ -12,6 +12,9 @@ import music.hzgkotlin.com.MetadataManager
 import music.hzgkotlin.com.R
 import music.hzgkotlin.com.adapter.PlayQueueAdapter
 
+/**
+ * 播放队列（歌单）
+ */
 class PlayQueueFragment : Fragment() {
     val TAG = "PlayQueueFragment"
 
