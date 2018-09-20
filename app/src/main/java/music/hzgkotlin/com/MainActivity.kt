@@ -9,8 +9,10 @@ import android.os.Handler
 import android.os.SystemClock
 import android.support.design.widget.NavigationView
 import android.app.Fragment
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.hardware.camera2.params.MeteringRectangle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
@@ -32,6 +34,7 @@ import music.hzgkotlin.com.fragment.SearchFragment
 import music.hzgkotlin.com.mode.SearchResponse
 import android.media.MediaScannerConnection
 import android.net.Uri
+import android.provider.MediaStore
 import android.provider.Settings
 import music.hzgkotlin.com.fragment.QueueListFragment
 
@@ -52,7 +55,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     val handler = Handler()
 
-    var toast: Toast? = null;
+    var toastShort: Toast? = null;
 
     /**
      * 进度条
@@ -69,8 +72,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (!(PackageManager.PERMISSION_GRANTED == this.checkCallingOrSelfPermission("android.permission.READ_EXTERNAL_STORAGE"))) {
-            requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
+        if (!(PackageManager.PERMISSION_GRANTED == this.checkCallingOrSelfPermission("android.permission.WRITE_EXTERNAL_STORAGE"))) {
+            requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), 1)
             return
         }
 
@@ -263,11 +266,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     @SuppressLint("ShowToast")
     fun toastShort(string: String) {
-        if (toast == null) {
-            toast = Toast.makeText(this, string, Toast.LENGTH_SHORT);
+        if (toastShort == null) {
+            toastShort = Toast.makeText(this, string, Toast.LENGTH_SHORT);
         }
-        toast?.setText(string)
-        toast?.show()
+        toastShort?.setText(string)
+        toastShort?.show()
     }
 
     /**
@@ -361,11 +364,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if (permissions[0] == Manifest.permission.READ_EXTERNAL_STORAGE && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (permissions[0] == Manifest.permission.WRITE_EXTERNAL_STORAGE &&
+                permissions[1] == Manifest.permission.READ_EXTERNAL_STORAGE &&
+                grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             //用户同意权限
-            finish()
-            val intent = Intent(this@MainActivity, MainActivity::class.java)
-            startActivity(intent)
+            recreate()
         } else {
             /**
              * 用户不同意权限
@@ -383,10 +386,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    //以后添加删除歌曲功能用
-//    context.getContentResolver().delete(
-//
-//    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-//
-//    MediaStore.Audio.Media.DATA+ " = '" + 音频文件全路径 + "'", null);
+    companion object {
+        /**
+         * 从列表删除歌曲
+         */
+        fun deleteMusic(context: Context, fileName: String) {
+            context.getContentResolver().delete(
+                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                    MediaStore.Audio.Media.DATA + " = '" + fileName + "'", null);
+            MetadataManager.instance.initLocalMusic(context)
+        }
+    }
 }

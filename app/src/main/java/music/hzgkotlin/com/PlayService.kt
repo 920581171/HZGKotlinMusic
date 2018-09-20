@@ -1,11 +1,14 @@
 package music.hzgkotlin.com
 
+import android.annotation.SuppressLint
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserServiceCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.widget.Toast
+import java.io.File
 
 class PlayService : MediaBrowserServiceCompat() {
     private val TAG = "PlayService"
@@ -13,6 +16,8 @@ class PlayService : MediaBrowserServiceCompat() {
     private val MEDIA_ID_ROOT = "mediaIdRoot"
     private var session: MediaSessionCompat? = null
     private var mediaPlayer: MediaPlayer? = null
+
+    var toastShort: Toast? = null;
 
     override fun onCreate() {
         super.onCreate()
@@ -89,11 +94,19 @@ class PlayService : MediaBrowserServiceCompat() {
     private val sessionCallback: MediaSessionCompat.Callback = object : MediaSessionCompat.Callback() {
         override fun onSkipToQueueItem(id: Long) {
             super.onSkipToQueueItem(id)
-            MetadataManager.instance.playingPosition = id
-            val uri = MetadataManager.instance.getPlayingQueueItemByPosition().description?.mediaUri
-            mediaPlayer?.reset()
-            mediaPlayer?.setDataSource(this@PlayService, uri)
-            mediaPlayer?.prepare()
+            try {
+                MetadataManager.instance.playingPosition = id
+                val uri = MetadataManager.instance.getPlayingQueueItemByPosition().description?.mediaUri
+                mediaPlayer?.reset()
+                mediaPlayer?.setDataSource(this@PlayService, uri)
+                mediaPlayer?.prepare()
+            }catch (e:Exception){
+                toastShort("文件出错，删除文件")
+                val file = File(MetadataManager.instance.getPlayingQueueItemByPosition().description?.mediaUri?.path)
+                MainActivity.deleteMusic(this@PlayService,file.path)
+                file.delete()
+            }
+
         }
 
         override fun onPlay() {
@@ -124,6 +137,15 @@ class PlayService : MediaBrowserServiceCompat() {
             super.onSkipToNext()
             onSkipToQueueItem(MetadataManager.instance.playingPositionNext())
         }
+    }
+
+    @SuppressLint("ShowToast")
+    fun toastShort(string: String) {
+        if (toastShort == null) {
+            toastShort = Toast.makeText(this, string, Toast.LENGTH_SHORT);
+        }
+        toastShort?.setText(string)
+        toastShort?.show()
     }
 
     /**

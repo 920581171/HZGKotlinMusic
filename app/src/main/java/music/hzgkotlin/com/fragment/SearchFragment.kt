@@ -40,6 +40,7 @@ class SearchFragment : Fragment() {
         adapter.data = null
         adapter.setEmptyLayout(R.layout.recycler_item_empty)
         adapter.setOnItemClickListener { view, adapterPosition ->
+            activity?.toastShort("开始下载")
             DownloadOkClient.instance.startDownload(
                     Consts.address +
                             adapter.data.get(adapterPosition).id +

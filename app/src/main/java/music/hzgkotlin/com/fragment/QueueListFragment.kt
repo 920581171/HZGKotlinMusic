@@ -46,8 +46,6 @@ class QueueListFragment : Fragment() {
         adapter.setOnItemClickListener { view, adapterPosition ->
             MetadataManager.instance.playCustomQueue(adapterPosition)
             activity?.swichFragment(activity!!.FRAGMENT_PLAY_QUEUE)
-            if (MetadataManager.instance.playingQueue?.size != 0)
-                activity?.controller?.transportControls?.skipToQueueItem(0)
         }
 
         recyclerView?.adapter = adapter
