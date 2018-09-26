@@ -208,7 +208,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             override fun onQueryTextSubmit(query: String?): Boolean {
-                SearchOkClient.instance.startSearch(query!!, "100", "1")
+                SearchOkClient.instance.startSearch(query!!, "100", "0")
                 return true
             }
         })
